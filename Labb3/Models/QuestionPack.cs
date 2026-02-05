@@ -15,12 +15,12 @@ internal class QuestionPack
     public Difficulty Difficulty { get; set; }
     public int TimeLimitInSeconds { get; set; }
 
-    // Relation till Category
+    
     public ObjectId CategoryId { get; set; }
 
     public List<Question> Questions { get; set; }
 
-    // Krävs av MongoDB
+    
     public QuestionPack()
     {
         Questions = new List<Question>();
@@ -33,4 +33,7 @@ internal class QuestionPack
         TimeLimitInSeconds = timeLimitInSeconds;
         Questions = new List<Question>();
     }
+
+    
+
 }
