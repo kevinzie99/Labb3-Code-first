@@ -11,18 +11,8 @@ namespace Labb3.Views
 
         private void CreatePack_Click(object sender, RoutedEventArgs e)
         {
-            if (DataContext is ViewModels.NewPackViewModel vm)
-            {
-                if (string.IsNullOrWhiteSpace(vm.PackName))
-                {
-                    MessageBox.Show("Please enter a pack name.", "Invalid Name",
-                        MessageBoxButton.OK, MessageBoxImage.Warning);
-                    return;
-                }
-
-                DialogResult = true;
-                Close();
-            }
+            DialogResult = true;
+            Close();
         }
     }
 }

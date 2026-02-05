@@ -28,11 +28,12 @@ namespace Labb3.Services
             _collection.InsertOne(category);
         }
 
-        public void Delete(ObjectId id)
+        public void Delete(string id)
         {
             var filter = Builders<Category>.Filter.Eq(c => c.Id, id);
             _collection.DeleteOne(filter);
         }
+
 
         public void EnsureDefaultCategories()
         {

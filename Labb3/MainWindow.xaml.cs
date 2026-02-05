@@ -1,38 +1,59 @@
 ﻿using Labb3.Models;
 using Labb3.Services;
 using Labb3.ViewModels;
-using System.Text;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
-namespace Labb3;
-
-public partial class MainWindow : Window
+namespace Labb3
 {
-    private int count = 1;
-    public MainWindow()
+    public partial class MainWindow : Window
     {
-        InitializeComponent();
-        
-
-        DataContext = new MainWindowViewModel();
-
-
-        var repo = new QuestionPackRepository();
-        var allPacks = repo.GetAll();
-
-        foreach (var pack in allPacks)
+        public MainWindow()
         {
-            Console.WriteLine(pack.Name);
+            InitializeComponent();
+
+            
+            InitializeDatabase();
+
+            DataContext = new MainWindowViewModel();
+        }
+
+        private void InitializeDatabase()
+        {
+            var categoryRepo = new CategoryRepository();
+            var packRepo = new QuestionPackRepository();
+
+          
+            if (!categoryRepo.GetAll().Any())
+            {
+                categoryRepo.Create(new Category("Matte"));
+                categoryRepo.Create(new Category("Historia"));
+                categoryRepo.Create(new Category("Sport"));
+            }
+
+          
+            if (!packRepo.GetAll().Any())
+            {
+                var firstCategory = categoryRepo.GetAll().First();
+                var pack = new QuestionPack("Första Testpack")
+                {
+                    Difficulty = Difficulty.Medium,
+                    TimeLimitInSeconds = 30,
+                    Questions = new List<Question>
+                    {
+                        new Question(
+                            "Vad är 2 + 2?",
+                            "4",
+                            "3",
+                            "5",
+                            "6"
+                        )
+                    },
+                    CategoryId = firstCategory.Id
+                };
+                packRepo.Create(pack);
+            }
         }
     }
-
-   
 }

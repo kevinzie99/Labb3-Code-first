@@ -1,17 +1,15 @@
-﻿using Labb3.Data;
-using Labb3.Models;
-using System;
-using System.Collections.Generic;
+﻿using Labb3.Models;
+using Labb3.Services;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Labb3.Command;
 
 namespace Labb3.ViewModels
 {
     class MainWindowViewModel : ViewModelBase
     {
+        private readonly QuestionPackRepository _packRepo = new QuestionPackRepository();
+        private readonly CategoryRepository _categoryRepo = new CategoryRepository();
 
         private object _currentViewModel;
         public object CurrentViewModel
@@ -57,11 +55,13 @@ namespace Labb3.ViewModels
 
             if (window.ShowDialog() == true)
             {
-                
                 var newPack = new QuestionPack(viewModel.PackName)
                 {
                     TimeLimitInSeconds = viewModel.TimeLimit
                 };
+
+               
+                _packRepo.Create(newPack);
 
                 var newPackViewModel = new QuestionPackViewModel(newPack);
                 Packs.Add(newPackViewModel);
@@ -71,8 +71,8 @@ namespace Labb3.ViewModels
                 newPackViewModel.Questions.Add(defaultQuestion);
                 ConfigurationViewModel.ActiveQuestion = defaultQuestion;
 
-              
-                JSON.SaveQuestionPacks(Packs.Select(p => p.Model).ToList());
+                
+                _packRepo.Update(newPack);
             }
         }
 
@@ -83,11 +83,10 @@ namespace Labb3.ViewModels
             {
                 if (mainWindow.WindowStyle == System.Windows.WindowStyle.None)
                 {
-                  
                     mainWindow.WindowStyle = System.Windows.WindowStyle.SingleBorderWindow;
                 }
                 else
-                { 
+                {
                     mainWindow.WindowStyle = System.Windows.WindowStyle.None;
                 }
             }
@@ -104,7 +103,6 @@ namespace Labb3.ViewModels
             {
                 ActivePack = selectedPack;
 
-              
                 if (ActivePack.Questions.Count > 0)
                 {
                     ConfigurationViewModel.ActiveQuestion = ActivePack.Questions[0];
@@ -135,22 +133,19 @@ namespace Labb3.ViewModels
                 var packToDelete = ActivePack;
                 var currentIndex = Packs.IndexOf(packToDelete);
 
-               
                 if (currentIndex > 0)
                     ActivePack = Packs[currentIndex - 1];
                 else
                     ActivePack = Packs[1];
 
-          
+                
+                _packRepo.Delete(packToDelete.Model.Id);
                 Packs.Remove(packToDelete);
 
                 if (ActivePack.Questions.Count > 0)
                 {
                     ConfigurationViewModel.ActiveQuestion = ActivePack.Questions[0];
                 }
-
-              
-                JSON.SaveQuestionPacks(Packs.Select(p => p.Model).ToList());
             }
         }
 
@@ -159,7 +154,6 @@ namespace Labb3.ViewModels
 
         public MainWindowViewModel()
         {
-
             ConfigurationViewModel = new ConfigurationViewModel(this);
             PlayerViewModel = new PlayerViewModel(this);
 
@@ -170,17 +164,21 @@ namespace Labb3.ViewModels
                 PlayerViewModel?.LoadQuestion(0);
             });
 
+          
+            _categoryRepo.EnsureDefaultCategories();
 
-            var loadedPacks = JSON.LoadQuestionPacks();
+           
+            var loadedPacks = _packRepo.GetAll();
             foreach (var pack in loadedPacks)
             {
                 Packs.Add(new QuestionPackViewModel(pack));
             }
 
-           
+            
             if (Packs.Count == 0)
             {
                 var defaultPack = new QuestionPack("Default Question Pack");
+                _packRepo.Create(defaultPack);
                 Packs.Add(new QuestionPackViewModel(defaultPack));
             }
 
@@ -192,23 +190,12 @@ namespace Labb3.ViewModels
             }
 
             NewPackCommand = new DelegateCommand(_ => CreateNewPack());
-
             ToggleFullscreenCommand = new DelegateCommand(_ => ToggleFullscreen());
-
             SelectPackCommand = new DelegateCommand(obj => SelectPack(obj));
-
             DeletePackCommand = new DelegateCommand(_ => DeleteCurrentPack());
-
             ExitCommand = new DelegateCommand(_ => ExitApplication());
 
             CurrentViewModel = ConfigurationViewModel;
-           
-
-            
-
-
         }
-
-
     }
 }

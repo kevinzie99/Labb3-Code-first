@@ -3,44 +3,30 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:fa="http://schemas.awesome.incremented/wpf/xaml/fontawesome.sharp"
-             xmlns:local="clr-namespace:Labb3.Views"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    <Grid>
+    <Grid Margin="10">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <DockPanel HorizontalAlignment="Stretch" Grid.Row="0" Grid.Column="0">
-           
+     
+        <DockPanel Grid.Row="0" Grid.Column="0">
             <Label Content="{Binding ActivePack.Name}" FontWeight="Bold" />
-
-            
-            <ComboBox 
-        Width="150" 
-        Margin="10,0" 
-        ItemsSource="{Binding Categories}" 
-        SelectedItem="{Binding SelectedCategory}" 
-        DisplayMemberPath="Name" 
-        HorizontalAlignment="Right"/>
-
-           
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                <Button Margin="4" Content="{fa:Icon sliders}" Command="{Binding OpenPackOptionsCommand}"/>
-                <Button Margin="4" Content="{fa:Icon plus}" Command="{Binding AddQuestionCommand}"/>
-                <Button Margin="4" Content="{fa:Icon minus}" Command="{Binding RemoveQuestionCommand}"/>
+                <Button Margin="4" Content="Åtgärder" Command="{Binding OpenPackOptionsCommand}"/>
+                <Button Margin="4" Content="+" Command="{Binding AddQuestionCommand}"/>
+                <Button Margin="4" Content="-" Command="{Binding RemoveQuestionCommand}"/>
             </StackPanel>
         </DockPanel>
 
-
-        <ListBox Grid.Row="1" Margin="5" ItemsSource="{Binding ActivePack.Questions}" 
-         SelectedItem="{Binding ActiveQuestion}">
+        <ListBox Grid.Row="1" Grid.Column="0" Margin="5" ItemsSource="{Binding ActivePack.Questions}" 
+                 SelectedItem="{Binding ActiveQuestion}">
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <StackPanel>
@@ -50,19 +36,25 @@
                 </DataTemplate>
             </ListBox.ItemTemplate>
         </ListBox>
-        
-        <StackPanel Orientation="Vertical" Grid.Column="1" Grid.RowSpan="2">
-            <Label Content="Question:" Margin="15,20,0,0" FontWeight="Bold"/>
-            <TextBox Height="80" Margin="20,0,20,40" Text="{Binding ActiveQuestion.Query, FallbackValue='New Question'}" />
-            <Label Content="Correct Answer:" Margin="15,0,0,0" FontWeight="Bold" />
-            <TextBox Text="{Binding ActiveQuestion.CorrectAnswer}" Margin="20,0" />
-            <Label Content="First Incorrect Answer:" Margin="15,0,0,0" FontWeight="Bold"/>
-            <TextBox Text="{Binding ActiveQuestion.IncorrectAnswers[0]}" Margin="20,0"/>
-            <Label Content="Second Incorrect Answer:" Margin="15,0,0,0" FontWeight="Bold"/>
-            <TextBox Text="{Binding ActiveQuestion.IncorrectAnswers[1]}" Margin="20,0" />
-            <Label Content="Third Incorrect Answer:" Margin="15,0,0,0" FontWeight="Bold"/>
-            <TextBox Text="{Binding ActiveQuestion.IncorrectAnswers[2]}" Margin="20,0" />
+
+        <StackPanel Grid.Column="1" Grid.RowSpan="2" Margin="10">
+            <Label Content="Question:" FontWeight="Bold" />
+            <TextBox Height="60" Text="{Binding ActiveQuestion.Query}" Margin="0,0,0,10" />
+
+            <Label Content="Correct Answer:" FontWeight="Bold"/>
+            <TextBox Text="{Binding ActiveQuestion.CorrectAnswer}" Margin="0,0,0,10" />
+
+            <Label Content="Incorrect Answers:" FontWeight="Bold"/>
+            <TextBox Text="{Binding ActiveQuestion.IncorrectAnswers[0]}" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding ActiveQuestion.IncorrectAnswers[1]}" Margin="0,0,0,5"/>
+            <TextBox Text="{Binding ActiveQuestion.IncorrectAnswers[2]}" Margin="0,0,0,10"/>
+
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="0,10,0,0">
+                <ComboBox Width="120" ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" DisplayMemberPath="Name"/>
+                <Button Content="+" Command="{Binding AddCategoryCommand}" Margin="5,0"/>
+                <Button Content="-" Command="{Binding RemoveCategoryCommand}" Margin="5,0"/>
+            </StackPanel>
         </StackPanel>
-        
     </Grid>
 </UserControl>
+
