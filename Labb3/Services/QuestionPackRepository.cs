@@ -25,10 +25,12 @@ namespace Labb3.Services
             }
             catch (System.Exception ex)
             {
-                Console.WriteLine("Fel vid hämtning av QuestionPacks: " + ex.Message);
+                System.Diagnostics.Debug.WriteLine($"Error fetching QuestionPacks: {ex.Message}");
                 return new List<QuestionPack>();
             }
         }
+
+
 
 
 
