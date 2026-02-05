@@ -1,7 +1,8 @@
-﻿using Labb3.Models;
-using MongoDB.Bson;
+﻿using MongoDB.Bson;
 using MongoDB.Driver;
+using Labb3.Models;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Labb3.Services
 {
@@ -17,7 +18,6 @@ namespace Labb3.Services
             _collection = database.GetCollection<Category>("Categories");
         }
 
-  
         public List<Category> GetAll()
         {
             return _collection.Find(_ => true).ToList();
@@ -28,18 +28,21 @@ namespace Labb3.Services
             _collection.InsertOne(category);
         }
 
-
         public void Delete(ObjectId id)
         {
             var filter = Builders<Category>.Filter.Eq(c => c.Id, id);
             _collection.DeleteOne(filter);
         }
 
-  
-        public Category GetById(ObjectId id)
+        public void EnsureDefaultCategories()
         {
-            var filter = Builders<Category>.Filter.Eq(c => c.Id, id);
-            return _collection.Find(filter).FirstOrDefault();
+            var all = GetAll();
+            if (!all.Any())
+            {
+                Create(new Category("Matte"));
+                Create(new Category("Historia"));
+                Create(new Category("Sport"));
+            }
         }
     }
 }

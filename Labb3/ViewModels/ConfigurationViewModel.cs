@@ -13,6 +13,7 @@ namespace Labb3.ViewModels
         private readonly QuestionPackRepository _packRepo = new QuestionPackRepository();
         private readonly CategoryRepository _categoryRepo = new CategoryRepository();
 
+        
         public ObservableCollection<Category> Categories { get; set; } = new ObservableCollection<Category>();
 
         private Category _selectedCategory;
@@ -35,7 +36,7 @@ namespace Labb3.ViewModels
             }
         }
 
-     
+        
         public QuestionPackViewModel? ActivePack => _mainWindowViewModel?.ActivePack;
 
         private Question _activeQuestion;
@@ -56,12 +57,12 @@ namespace Labb3.ViewModels
             }
         }
 
-    
+        
         public DelegateCommand OpenPackOptionsCommand { get; }
         public DelegateCommand AddQuestionCommand { get; }
         public DelegateCommand RemoveQuestionCommand { get; }
 
-      
+        
         public ConfigurationViewModel(MainWindowViewModel? mainWindowViewModel)
         {
             _mainWindowViewModel = mainWindowViewModel;
@@ -73,9 +74,16 @@ namespace Labb3.ViewModels
             LoadCategories();
         }
 
-      
+       
         private void LoadCategories()
         {
+            if (!_categoryRepo.GetAll().Any())
+            {
+                _categoryRepo.Create(new Category("Matte"));
+                _categoryRepo.Create(new Category("Historia"));
+                _categoryRepo.Create(new Category("Sport"));
+            }
+
             Categories.Clear();
             var cats = _categoryRepo.GetAll();
             foreach (var cat in cats)
@@ -89,7 +97,7 @@ namespace Labb3.ViewModels
             }
         }
 
-    
+        
         private void AddQuestion()
         {
             if (ActivePack != null)
@@ -98,7 +106,7 @@ namespace Labb3.ViewModels
                 ActivePack.Questions.Add(newQuestion);
                 ActiveQuestion = newQuestion;
 
-                _packRepo.Update(ActivePack.Model); 
+                _packRepo.Update(ActivePack.Model);
             }
         }
 
@@ -109,11 +117,11 @@ namespace Labb3.ViewModels
                 ActivePack.Questions.Remove(ActiveQuestion);
                 ActiveQuestion = ActivePack.Questions.FirstOrDefault();
 
-                _packRepo.Update(ActivePack.Model); 
+                _packRepo.Update(ActivePack.Model);
             }
         }
 
-    
+        
         private void OpenPackOptions()
         {
             if (ActivePack != null)
@@ -128,6 +136,7 @@ namespace Labb3.ViewModels
             }
         }
 
+      
         private void SavePack()
         {
             if (ActivePack != null)
@@ -136,7 +145,7 @@ namespace Labb3.ViewModels
             }
         }
 
-       
+        
         private void ActiveQuestion_PropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
             SavePack();
